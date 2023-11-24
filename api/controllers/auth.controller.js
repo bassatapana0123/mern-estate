@@ -1,7 +1,8 @@
 import User from '../models/user.model.js'; // Assuming you have a User model defined
 import bcryptjs from 'bcryptjs';
+import { errorHandler } from '../utils/error.js';
 
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
     const { username, email, password } = req.body;
     const hashadPassword = bcryptjs.hashSync(password, 10);
     // Create a new instance of the User model with the provided data
@@ -14,8 +15,8 @@ export const signup = async (req, res) => {
         // Respond with a success message
         res.status(201).json('User created successfully!');
     } catch (error) {
-        // If there's an error, respond with an error status and message
-        console.error('Error creating user:', error);
-        res.status(500).json('Internal Server Error');
+
+        next(error);
+        
     }
 };
