@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure
+} from '../redux/user/userSlice';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { loading, error } = useSelector((state) => state.user)
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleChange = (e) =>{
     setFormData({
       ...formData,
@@ -15,7 +21,7 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
+      dispatch(signInStart()); // เริ่มต้นกระบวนการล็อกอิน
       const res = await fetch('/api/auth/signin', 
       {
         method: 'POST',
@@ -27,16 +33,13 @@ export default function SignIn() {
       const data = await res.json();
 
       if(data.success === false){
-        setLoading(false);
-        setError(data.message);
+        dispatch(signInFailure(data.message)); // ล็อกอินไม่สำเร็จ
         return;
       }
-      setLoading(false);
-      setError(null);
+      dispatch(signInSuccess(data)); // ล็อกอินสำเร็จ, อัพเดต state ด้วยข้อมูลผู้ใช้
       navigate('/')
     } catch (error) {
-      setLoading(false);
-      setError(error.message);
+      dispatch(signInFailure(error.message));
     }
   };
 
