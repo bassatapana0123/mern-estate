@@ -21,6 +21,11 @@ export default function SignIn() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+      // ตรวจสอบว่ามีข้อมูลใน formData หรือไม่
+  if (!formData.email || !formData.password) {
+    dispatch(signInFailure("Please fill in all fields."));
+    return;
+  }
     try {
       dispatch(signInStart()); // เริ่มต้นกระบวนการล็อกอิน
       const res = await fetch('/api/auth/signin', 
