@@ -141,6 +141,33 @@ export default function Profile() {
     }
   }
 
+  const handleListingDelete = async (listingId) => {
+     // Display a confirmation dialog
+     const userConfirmed = window.confirm('Are you sure you want to delete this listing?');
+
+     // Check if the user confirmed the deletion
+    if (!userConfirmed) {
+      console.log('Listing deletion canceled by user');
+      return;
+  }
+    try {
+      const response = await fetch(`/api/listing/delete/${listingId}`, {
+        method: 'DELETE',
+    });
+        
+    if (response.ok) {
+        console.log('Listing deleted successfully');
+
+        setUserListings((prev) => prev.filter((listing) => listing._id !==  listingId));
+    } else {
+        console.error('Failed to delete listing');
+        return;
+    }
+    } catch (error) {
+         console.error('Error during delete:', error);
+    }
+  }
+
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
@@ -233,7 +260,7 @@ export default function Profile() {
               </Link>
 
               <div className='flex flex-col items-center'>
-                <button className='text-red-700'>DELETE</button>
+                <button onClick={()=>handleListingDelete(listing._id)} className='text-red-700'>DELETE</button>
                 <button className='text-green-700'>EDIT</button>
               </div>
             </div>
