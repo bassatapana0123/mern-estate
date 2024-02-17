@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {useNavigate} from 'react-router-dom';
+import ListingItem from '../component/ListingItem';
 
 export default function Search() {
     const navigate = useNavigate();
@@ -15,8 +16,7 @@ export default function Search() {
 
     const [loading, setLoading] = useState(false);
     const [listings, setListings] = useState([]);
-    console.log(listings);
-    
+    //console.log(listings);
 
     useEffect(()=>{
 
@@ -80,13 +80,9 @@ export default function Search() {
         });
         }
 
-
         if (e.target.id === 'sort_order') {
-
             const sort = e.target.value.split('_')[0] || 'created_at';
-
             const order = e.target.value.split('_')[1] || 'desc';
-
             setSidebardata({...sidebardata, sort, order}); 
         }
     };
@@ -195,10 +191,22 @@ export default function Search() {
                     Search</button>
             </form>
         </div>
-        <div className='
-        text-3xl font-semibold 
-        border-b p-3 text-slate-700 mt-5'> 
-            <h1>Listing result:</h1>
+        <div className='flex-1'> 
+            <h1 className='text-3xl font-semibold 
+                border-b p-3 text-slate-700 mt-5'>
+                    Listing result:</h1>
+            <div className='p-7 flex flex-wrap gap-4'>
+                {!loading && listings.length === 0 && (
+                    <p className='text-xl text-slate-700'>No listing found</p>
+                )}
+                {loading && (
+                    <p className='text-xl text-slate-700 text-center w-full'>Loading...</p>
+                )}
+
+                {!loading && listings && listings.map((listings) => 
+                <ListingItem key={listings._id} listing={listings}
+                 />) }
+            </div>
         </div>
     </div>
   )
